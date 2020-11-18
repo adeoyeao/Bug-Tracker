@@ -20,6 +20,23 @@ nextApp.prepare()
 .then(() => {
       const app = express()
 
+      const allowAccess = (req, res, next) => {
+            if(req.isAuthenticated) {
+                  res.redirect("/home")
+                  next()
+            }
+      }
+
+      const restrictAccess = (req, res, next) => {
+            if(!req.isAuthenticated) {
+                  res.redirect("/")
+                  next()
+            }
+      }
+
+      app.use(/^\/$/, allowAccess)
+      app.use("/home", restrictAccess)
+
       app.get("*", (req, res) => {
             return handle(req, res)
       })
